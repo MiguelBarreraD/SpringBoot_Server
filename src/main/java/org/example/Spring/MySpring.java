@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.io.*;
 import org.example.runtime.GetMapping;
 import org.example.runtime.PostMapping;
-import org.example.runtime.RequestMapping;
 import org.example.runtime.RestController;
 import java.net.URL;
 
@@ -143,6 +142,15 @@ public class MySpring {
         }
     }
 
-    
+    public static Method search(String path, String httpMethod) {
+        switch (httpMethod) {
+            case "GET":
+                return GetMethod.get(path);
 
+            case "POST":
+                return PostMethod.get(path);
+            default:
+                return null;
+        }
+    }
 }

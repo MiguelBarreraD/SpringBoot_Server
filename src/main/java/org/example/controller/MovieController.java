@@ -12,19 +12,19 @@ import com.google.gson.JsonObject;
 public class MovieController {
 
     @GetMapping(value = "/movie")
-    public static byte[] getMovie(String nameMovie) {
+    public static String getMovie(String nameMovie) {
         JsonObject response = null;
         try {
             response = MovieAPI.getMovie(nameMovie);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return response.toString().getBytes();
+        return response.toString();
     }
 
     @PostMapping(value = "/Addmovie")
-    public static byte[] postMovie() {
-        return "{\"mensaje\": \"Se añadió el nombre\"}".getBytes();
+    public static String postMovie() {
+        return "{\"mensaje\": \"Se añadió el nombre\"}";
     }
 
 }

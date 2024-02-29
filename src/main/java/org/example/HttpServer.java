@@ -5,8 +5,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.lang.reflect.*;
 
 import javax.imageio.ImageIO;
+
+import org.example.Spring.MySpring;
+
 import java.awt.image.BufferedImage;
 
 /**
@@ -18,10 +22,16 @@ public class HttpServer {
      * Método principal que inicia el servidor.
      *
      * @param args Argumentos de la línea de comandos.
-     * @throws IOException  Si hay un problema de entrada/salida.
-     * @throws URISyntaxException Si hay un problema con la URI.
+     * @throws IOException            Si hay un problema de entrada/salida.
+     * @throws URISyntaxException     Si hay un problema con la URI.
+     * @throws ClassNotFoundException
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
      */
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        MySpring.loadComponents();
+
         ServerSocket serverSocket = null;
 
         // Intentar crear un socket del servidor en el puerto 35000.
@@ -53,10 +63,12 @@ public class HttpServer {
 
             boolean firstLine = true;
             String uriStr = "";
+            String httpMethod = "";
 
             // Leer las líneas de la solicitud del cliente.
             while ((inputLine = in.readLine()) != null) {
                 if (firstLine) {
+                    httpMethod = inputLine.split(" ")[0];
                     uriStr = inputLine.split(" ")[1];
                     firstLine = false;
                 }
@@ -69,19 +81,30 @@ public class HttpServer {
             // Parsear la URI de la solicitud.
             URI requestUri = new URI(uriStr);
 
-            // Manejar la solicitud y enviar la respuesta al cliente.
-            try {
-                header = httpOkResponseHeader(requestUri);
-                body = httpOkResponseBody(requestUri);
-                out.write(header);
-                out.write(body);
-            } catch (Exception e) {
-                header = httpErrorResponseHeader();
-                body = httpErrorResponseBody();
-                out.write(header);
-                out.write(body);
-            }
+            Method function = MySpring.search(requestUri.getPath(), httpMethod);
 
+            if (function != null) {
+                    System.out.println("================= SI SE ENCONTRO LA FUNCIÓN =========");
+                    
+                    String invoque = (String) function.invoke(null, requestUri.getQuery());
+                    header = httpOkResponseHeader(requestUri);
+                    body = invoque.getBytes();
+                    out.write(header);
+                    out.write(body);
+            } else {
+                // Manejar la solicitud y enviar la respuesta al cliente.
+                try {
+                    header = httpOkResponseHeader(requestUri);
+                    body = httpOkResponseBody(requestUri);
+                    out.write(header);
+                    out.write(body);
+                } catch (Exception e) {
+                    header = httpErrorResponseHeader();
+                    body = httpErrorResponseBody();
+                    out.write(header);
+                    out.write(body);
+                }
+            }
             // Cerrar flujos y el socket del cliente.
             out.close();
             in.close();
@@ -187,7 +210,7 @@ public class HttpServer {
         } else if (filePath.endsWith(".jpg")) {
             return "image/jpeg";
         } else {
-            return "application/octet-stream";
+            return "application/json";
         }
     }
 }

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         const nameMovie = input.value;
-        const site = "http://www.omdbapi.com/?apikey=2c3152c3&t=" + nameMovie;
+        const site = "http://localhost:35000/movie?name=" + nameMovie;
 
         fetch(site)
             .then(response => response.json())
