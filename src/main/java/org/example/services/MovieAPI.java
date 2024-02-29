@@ -38,10 +38,6 @@ public class MovieAPI {
         } else {
             System.out.println("GET request not worked");
         }
-        //return null;
         return JsonParser.parseString(response.toString()).getAsJsonObject();
     }
-
-    
-     
 }

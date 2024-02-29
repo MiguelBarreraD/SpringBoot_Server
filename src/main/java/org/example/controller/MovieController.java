@@ -1,10 +1,9 @@
-package org.example.controller;
+package org.example.Controller;
 
 import java.io.IOException;
 
-import org.example.runtime.GetMaping;
-import org.example.runtime.PostMaping;
-import org.example.runtime.RequestMapping;
+import org.example.runtime.GetMapping;
+import org.example.runtime.PostMapping;
 import org.example.runtime.RestController;
 import org.example.services.MovieAPI;
 import com.google.gson.JsonObject;
@@ -12,8 +11,8 @@ import com.google.gson.JsonObject;
 @RestController
 public class MovieController {
 
-    @GetMaping(value = "/movie")
-    public byte[] getMovie(String nameMovie) {
+    @GetMapping(value = "/movie")
+    public static byte[] getMovie(String nameMovie) {
         JsonObject response = null;
         try {
             response = MovieAPI.getMovie(nameMovie);
@@ -23,8 +22,8 @@ public class MovieController {
         return response.toString().getBytes();
     }
 
-    @PostMaping(value = "/movie")
-    public byte[] postMovie() {
+    @PostMapping(value = "/Addmovie")
+    public static byte[] postMovie() {
         return "{\"mensaje\": \"Se añadió el nombre\"}".getBytes();
     }
 
